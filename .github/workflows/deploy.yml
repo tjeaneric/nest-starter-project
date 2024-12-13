@@ -54,4 +54,4 @@ jobs:
       - name: pull the latest image from DockerHUB
         run: docker pull ${{ env.REPO }}
       - name: run the latest project container
-        run: docker run -d -p 3000:3000 --restart unless-stopped --name ${{ env.REPO }}
+        run: docker run -d -p 3000:3000 --restart unless-stopped --name ${{env.PROJECT_NAME}} ${{ env.REPO }}
