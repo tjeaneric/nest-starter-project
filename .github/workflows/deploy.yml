@@ -4,11 +4,6 @@ on:
   push:
     branches: ['main']
 
-env:
-  DOCKERHUB_USERNAME: tuyishimire
-  PROJECT_NAME: nest_starter_project
-  REPO: tuyishimire/nest_starter_project:latest
-
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-latest
@@ -19,23 +14,23 @@ jobs:
         uses: docker/login-action@v3
         with:
           logout: true
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{env.PROJECT_NAME}}:latest
+          tags: ${{ vars.REPO }}
 
   deploy:
     runs-on: Linux
     needs: build-and-push-docker-image
     steps:
       - name: Stop and remove the running docker container
-        run: docker stop ${{env.PROJECT_NAME}} && docker rm ${{env.PROJECT_NAME}} || true
+        run: docker stop ${{vars.PROJECT_NAME}} && docker rm ${{vars.PROJECT_NAME}} || true
       - name: Remove the old docker image
-        run: docker rmi ${{env.REPO}} || true
+        run: docker rmi ${{vars.REPO}} || true
       - name: pull the latest image from DockerHUB
-        run: docker pull ${{ env.REPO }}
+        run: docker pull ${{ vars.REPO }}
       - name: run the latest project container
-        run: docker run -d -p 3000:3000 --restart unless-stopped --name ${{env.PROJECT_NAME}} ${{ env.REPO }}
+        run: docker run -d -p 3000:3000 --restart unless-stopped --name ${{vars.PROJECT_NAME}} ${{ vars.REPO }}
