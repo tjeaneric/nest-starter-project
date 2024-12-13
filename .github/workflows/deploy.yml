@@ -49,8 +49,10 @@ jobs:
     runs-on: Linux
     needs: build-and-push-docker-image
     steps:
-      - name: Stop and remove thr running docker container
+      - name: Stop and remove the running docker container
         run: docker stop ${{env.PROJECT_NAME}} && docker rm ${{env.PROJECT_NAME}} || true
+      - name: Remove the old docker image
+        run: docker rm ${{env.REPO}}
       - name: pull the latest image from DockerHUB
         run: docker pull ${{ env.REPO }}
       - name: run the latest project container
