@@ -9,6 +9,7 @@ on:
 env:
   DOCKERHUB_USERNAME: tuyishimire
   PROJECT_NAME: nest_trater_project
+  REPO: ${{ env.DOCKERHUB_USERNAME }}/${{env.PROJECT_NAME}}:latest
 
 jobs:
   build-and-test:
@@ -47,8 +48,6 @@ jobs:
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{env.PROJECT_NAME}}:latest
 
   deploy:
-    env:
-      REPO: ${{ env.DOCKERHUB_USERNAME }}/${{env.PROJECT_NAME}}:latest
     runs-on: Linux
     needs: build-and-push-docker-image
     steps:
