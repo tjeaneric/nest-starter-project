@@ -23,8 +23,6 @@ jobs:
         run: npm run test:e2e
 
   build-and-push-docker-image:
-    env:
-      DOCKER_USERNAME: tuyishimire
     runs-on: ubuntu-latest
     needs: build-and-test
     steps:
@@ -43,3 +41,14 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nest_trater_project:latest
+
+  deploy:
+    env:
+      REPO: ${{ secrets.DOCKERHUB_USERNAME }}/nest_trater_project:latest
+    runs-on: nest-starter-prod
+    needs: build-and-push-docker-image
+    steps:
+      - name: pull the latest image from DockerHUB
+        run: ssh -i docker pull ${{ env.REPO }}
+      - name: run the latest project container
+        run: docker run -p 3000:3000 --restart unless-stopped --name ${{ env.REPO }}
