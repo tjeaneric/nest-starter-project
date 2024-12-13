@@ -3,9 +3,6 @@ name: deploy-nest-starter-project
 on:
   push:
     branches: ['main']
-  pull_request:
-    types: [closed]
-    branches: ['main']
 
 env:
   DOCKERHUB_USERNAME: tuyishimire
