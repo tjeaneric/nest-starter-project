@@ -6,8 +6,8 @@ on:
 
 env:
   DOCKERHUB_USERNAME: tuyishimire
-  PROJECT_NAME: nest_trater_project
-  REPO: tuyishimire/nest_trater_project:latest
+  PROJECT_NAME: nest_starter_project
+  REPO: tuyishimire/nest_starter_project:latest
 
 jobs:
   build-and-push-docker-image:
