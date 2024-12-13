@@ -9,7 +9,7 @@ on:
 env:
   DOCKERHUB_USERNAME: tuyishimire
   PROJECT_NAME: nest_trater_project
-  REPO: ${{ env.DOCKERHUB_USERNAME }}/${{env.PROJECT_NAME}}:latest
+  REPO: tuyishimire/nest_trater_project:latest
 
 jobs:
   build-and-test:
