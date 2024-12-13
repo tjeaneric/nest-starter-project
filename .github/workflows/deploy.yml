@@ -52,7 +52,7 @@ jobs:
       - name: Stop and remove the running docker container
         run: docker stop ${{env.PROJECT_NAME}} && docker rm ${{env.PROJECT_NAME}} || true
       - name: Remove the old docker image
-        run: docker rm ${{env.REPO}}
+        run: docker rmi ${{env.REPO}} || true
       - name: pull the latest image from DockerHUB
         run: docker pull ${{ env.REPO }}
       - name: run the latest project container
