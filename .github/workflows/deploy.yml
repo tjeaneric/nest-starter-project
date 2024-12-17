@@ -1,8 +1,25 @@
 name: deploy-nest-starter-project
 
 on:
-  push:
-    branches: ['main']
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag (e.g., v1.0.0) to deploy'
+        required: true
+        type: string
+        default: 'vx.x.x'
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - uat
+      release_notes:
+        description: 'Release notes'
+        required: true
+        type: string
 
 jobs:
   build-and-push-docker-image:
@@ -21,7 +38,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ vars.REPO }}
+          tags: |
+            ${{ vars.REPO }}:latest
 
   deploy:
     runs-on: Linux
