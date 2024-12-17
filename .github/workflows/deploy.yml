@@ -39,7 +39,7 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ vars.REPO }}:latest
+            ${{ vars.REPO }}
 
   deploy:
     runs-on: Linux
