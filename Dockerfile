@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
@@ -16,10 +16,10 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm install --omit=dev
-
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+RUN npm prune --production
 
 EXPOSE 3000
 
