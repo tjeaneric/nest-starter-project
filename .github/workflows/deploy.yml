@@ -14,7 +14,7 @@ on:
         default: 'prod'
         type: choice
         options:
-          - prod
+          - ec2_prod_server
           - uat
       release_notes:
         description: 'Release notes'
@@ -24,7 +24,7 @@ on:
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-latest
-    environment: prod
+    environment: ec2_prod_server
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -44,7 +44,7 @@ jobs:
   deploy:
     runs-on: Linux
     needs: build-and-push-docker-image
-    environment: prod
+    environment: ec2_prod_server
     steps:
       - name: Stop and remove the running docker container
         run: docker stop ${{vars.PROJECT_NAME}} && docker rm ${{vars.PROJECT_NAME}} || true
