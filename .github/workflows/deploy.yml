@@ -21,7 +21,7 @@ on:
         required: true
         type: string
 env:
-  IMAGE_NAME: tuyishimire/$(echo ${{ github.repository }} | cut -d'/' -f2)
+  IMAGE_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-latest
