@@ -21,14 +21,13 @@ on:
         required: true
         type: string
 
-env:
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-latest
     environment: ec2_prod_server
     steps:
+      - name: Extract repository name
+        run: echo "IMAGE_NAME=tuyishimire/$(echo ${{ github.repository }} | cut -d'/' -f2)" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -43,7 +42,6 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-
   deploy:
     runs-on: Linux
     needs: build-and-push-docker-image
