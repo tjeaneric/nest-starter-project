@@ -11,7 +11,7 @@ on:
       environment:
         description: 'Environment to deploy to'
         required: true
-        default: 'prod'
+        default: 'ec2_prod_server'
         type: choice
         options:
           - ec2_prod_server
@@ -20,6 +20,9 @@ on:
         description: 'Release notes'
         required: true
         type: string
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push-docker-image:
@@ -39,7 +42,7 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ vars.REPO }}
+            ${{ env.IMAGE_NAME }}:latest
 
   deploy:
     runs-on: Linux
@@ -47,10 +50,10 @@ jobs:
     environment: ec2_prod_server
     steps:
       - name: Stop and remove the running docker container
-        run: docker stop ${{vars.PROJECT_NAME}} && docker rm ${{vars.PROJECT_NAME}} || true
+        run: docker stop ${{env.IMAGE_NAME}} && docker rm ${{env.IMAGE_NAME}} || true
       - name: Remove the old docker image
-        run: docker rmi ${{vars.REPO}} || true
+        run: docker rmi ${{env.IMAGE_NAME}}:latest || true
       - name: pull the latest image from DockerHUB
-        run: docker pull ${{ vars.REPO }}
+        run: docker pull ${{env.IMAGE_NAME}}:latest
       - name: run the latest project container
-        run: docker run -d -p 3000:3000 --restart unless-stopped --name ${{vars.PROJECT_NAME}} ${{ vars.REPO }}
+        run: docker run -d -p 3000:3000 --restart unless-stopped --name ${{${{env.IMAGE_NAME}}}} ${{env.IMAGE_NAME}}:latest
