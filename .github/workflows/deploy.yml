@@ -20,6 +20,11 @@ on:
         description: 'Release notes'
         required: true
         type: string
+      version_to_rollback:
+        description: 'Version to rollback to (leave empty for new deployment)'
+        required: false
+        type: string
+        default: ''
 env:
   IMAGE_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
 jobs:
@@ -41,13 +46,37 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
+
+  create-release:
+    needs: build-and-push-docker-image
+    if: inputs.version_to_rollback == '' # Only create release for new deployments
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed for creating releases
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag_name }}
+          tag_name_exists_action: 'error'
+          name: Release ${{ inputs.tag_name }}
+          body: |
+            ## Release Notes
+            ${{ inputs.release_notes }}
+
+            ## Deployment Information
+            - Environment: ${{ inputs.environment }}
+            - Docker Image: ${{ env.IMAGE_NAME }}:${{ inputs.tag_name }}
+          draft: false
+          prerelease: false
+
   deploy:
     runs-on: Linux
-    needs: build-and-push-docker-image
+    needs: create-release
     environment: ec2_prod_server
     steps:
       - name: Stop and remove the running docker container
-        run: docker stop ${{env.IMAGE_NAME}} && docker rm ${{env.IMAGE_NAME}} || true
+        run: docker stop ${{ github.event.repository.name }} && docker rm ${{ github.event.repository.name }} || true
       - name: Remove the old docker image
         run: docker rmi ${{env.IMAGE_NAME}}:latest || true
       - name: pull the latest image from DockerHUB
