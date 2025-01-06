@@ -58,6 +58,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag_name }}
+          tag_name_exists_action: 'error'
           name: Release ${{ inputs.tag_name }}
           body: |
             ## Release Notes
@@ -66,7 +67,6 @@ jobs:
             ## Deployment Information
             - Environment: ${{ inputs.environment }}
             - Docker Image: ${{ env.IMAGE_NAME }}:${{ inputs.tag_name }}
-            - Deployment Date: ${{ github.event.created_at || github.event.updated_at }}
           draft: false
           prerelease: false
 
@@ -76,7 +76,7 @@ jobs:
     environment: ec2_prod_server
     steps:
       - name: Stop and remove the running docker container
-        run: docker stop ${{env.IMAGE_NAME}} && docker rm ${{env.IMAGE_NAME}} || true
+        run: docker stop ${{ github.event.repository.name }} && docker rm ${{ github.event.repository.name }} || true
       - name: Remove the old docker image
         run: docker rmi ${{env.IMAGE_NAME}}:latest || true
       - name: pull the latest image from DockerHUB
