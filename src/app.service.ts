@@ -3,6 +3,6 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
   getHello(): string {
-    return 'Hello World in 2025!';
+    return `Hello World on ${new Date().toLocaleString()}!`;
   }
 }
