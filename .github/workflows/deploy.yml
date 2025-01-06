@@ -66,7 +66,7 @@ jobs:
             ## Deployment Information
             - Environment: ${{ inputs.environment }}
             - Docker Image: ${{ env.IMAGE_NAME }}:${{ inputs.tag_name }}
-            - Deployment Date: ${{ now() }}
+            - Deployment Date: ${{ github.event.created_at || github.event.updated_at }}
           draft: false
           prerelease: false
 
