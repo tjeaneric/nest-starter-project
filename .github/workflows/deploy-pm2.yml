@@ -1,0 +1,116 @@
+name: deploy-nest-starter-project
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag (e.g., v1.0.0) to deploy'
+        required: true
+        type: string
+        default: 'vx.x.x'
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'ec2_prod_server'
+        type: choice
+        options:
+          - ec2_prod_server
+          - pm2_prod
+          - uat
+      release_notes:
+        description: 'Release notes'
+        required: true
+        type: string
+      version_to_rollback:
+        description: 'Version to rollback to (leave empty for new deployment)'
+        required: false
+        type: string
+        default: ''
+
+env:
+  PROJECT_PATH: ${{ vars.PROJECT_DIR }}/${{ github.event.repository.name }}
+
+jobs:
+  create-release:
+    if: inputs.version_to_rollback == '' # Only create release for new deployments
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed for creating releases
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag_name }}
+          tag_name_exists_action: 'error'
+          name: Release ${{ inputs.tag_name }}
+          body: |
+            ## Release Notes
+            ${{ inputs.release_notes }}
+
+            ## Deployment Information
+            - Environment: ${{ inputs.environment }}
+            - PM2 Process Name: ${{ github.event.repository.name }}
+          draft: false
+          prerelease: false
+
+  build-and-deploy:
+    needs: create-release
+    runs-on: Linux
+    strategy:
+      matrix:
+        node-version: [20.x]
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Checkout tag
+        run: git checkout ${{ github.event.inputs.tag_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Cache production dependencies
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-prod-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-prod-
+
+      - name: Deploy with PM2
+        run: |
+          # Create project directory if it doesn't exist
+          mkdir -p ${{ env.PROJECT_PATH }}
+
+          # Copy build files to project directory
+          cp -r dist/* ${{ env.PROJECT_PATH }}/
+          cp package*.json ${{ env.PROJECT_PATH }}/
+
+          # Install production dependencies
+          cd ${{ env.PROJECT_PATH }}
+          npm ci --production
+
+          # Start/Restart PM2 process
+          pm2 reload ${{ github.event.repository.name }} --update-env
+
+      - name: Save PM2 process list
+        run: pm2 save

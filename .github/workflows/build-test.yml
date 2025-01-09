@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run lint
+      - name: Run lint - Format check
         run: npm run lint
 
       - name: Build project
