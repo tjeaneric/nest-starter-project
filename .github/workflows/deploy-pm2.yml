@@ -107,7 +107,9 @@ jobs:
 
           # Install production dependencies
           cd ${{ env.PROJECT_PATH }}
-          npm ci --production
+          npm ci --omit=dev
+
+          cd ${{ env.PROJECT_PATH }}
 
           # Start/Restart PM2 process
           pm2 reload ${{ github.event.repository.name }} --update-env
