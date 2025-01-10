@@ -33,7 +33,7 @@ env:
 jobs:
   create-release:
     if: inputs.version_to_rollback == '' # Only create release for new deployments
-    runs-on: ubuntu-latest
+    runs-on: DEVOPS-UBU-DEV
     permissions:
       contents: write # Needed for creating releases
     steps:
@@ -55,7 +55,7 @@ jobs:
 
   build-and-deploy:
     needs: create-release
-    runs-on: Linux
+    runs-on: DEVOPS-UBU-DEV
     strategy:
       matrix:
         node-version: [20.x]
