@@ -87,13 +87,13 @@ jobs:
       - name: Build application
         run: npm run build
 
-      #   - name: Cache production dependencies
-      #     uses: actions/cache@v4
-      #     with:
-      #       path: node_modules
-      #       key: ${{ runner.os }}-node-prod-${{ hashFiles('**/package-lock.json') }}
-      #       restore-keys: |
-      #         ${{ runner.os }}-node-prod-
+      - name: Cache production dependencies
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-prod-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-prod-
 
       - name: Deploy with PM2
         run: |
@@ -104,11 +104,9 @@ jobs:
           cp -r dist/* ${{ env.PROJECT_PATH }}/dist/
           cp package*.json ${{ env.PROJECT_PATH }}/dist/
 
-            #   # Install production dependencies
-            #   cd ${{ env.PROJECT_PATH }}
-            #   npm ci --omit=dev
-
+          # Install production dependencies
           cd ${{ env.PROJECT_PATH }}
+          npm ci --omit=dev
 
           # Start/Restart PM2 process
           pm2 reload ${{ github.event.repository.name }} --update-env || pm2 start dist/main.js --name ${{ github.event.repository.name }}
