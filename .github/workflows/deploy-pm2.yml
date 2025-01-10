@@ -73,20 +73,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-
       - name: Cache production dependencies
         uses: actions/cache@v4
         with:
@@ -95,6 +81,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-prod-
 
+      - name: Install production dependencies
+        run: npm ci --omit=dev
+
+      - name: Build application
+        run: npm run build
+
       - name: Deploy with PM2
         run: |
           # Create project directory if it doesn't exist
@@ -102,11 +94,6 @@ jobs:
 
           # Copy build files to project directory
           cp -r dist/* ${{ env.PROJECT_PATH }}/dist/
-          cp package*.json ${{ env.PROJECT_PATH }}/dist/
-
-          # Install production dependencies
-          cd ${{ env.PROJECT_PATH }}
-          npm ci --omit=dev
 
           cd ${{ env.PROJECT_PATH }}
 
