@@ -87,13 +87,13 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Cache production dependencies
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-prod-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-prod-
+      #   - name: Cache production dependencies
+      #     uses: actions/cache@v4
+      #     with:
+      #       path: node_modules
+      #       key: ${{ runner.os }}-node-prod-${{ hashFiles('**/package-lock.json') }}
+      #       restore-keys: |
+      #         ${{ runner.os }}-node-prod-
 
       - name: Deploy with PM2
         run: |
