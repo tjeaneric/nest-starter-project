@@ -98,7 +98,7 @@ jobs:
       - name: Deploy with PM2
         run: |
           # Create project directory if it doesn't exist
-          mkdir -p ${{ env.PROJECT_PATH }}
+          mkdir -p ${{ env.PROJECT_PATH }}/dist
 
           # Copy build files to project directory
           cp -r dist/* ${{ env.PROJECT_PATH }}/dist/
