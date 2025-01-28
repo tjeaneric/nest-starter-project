@@ -33,7 +33,7 @@ env:
 jobs:
   create-release:
     if: inputs.version_to_rollback == '' # Only create release for new deployments
-    runs-on: ubuntu-latest
+    runs-on: DEVOPS-UBU-DEV
     permissions:
       contents: write # Needed for creating releases
     steps:
@@ -41,7 +41,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag_name }}
-          tag_name_exists_action: 'error'
           name: Release ${{ inputs.tag_name }}
           body: |
             ## Release Notes
@@ -55,7 +54,7 @@ jobs:
 
   build-and-deploy:
     needs: create-release
-    runs-on: Linux
+    runs-on: DEVOPS-UBU-DEV
     strategy:
       matrix:
         node-version: [20.x]
@@ -99,20 +98,18 @@ jobs:
       - name: Deploy with PM2
         run: |
           # Create project directory if it doesn't exist
-          mkdir -p ${{ env.PROJECT_PATH }}
+          mkdir -p ${{ env.PROJECT_PATH }}/dist
 
           # Copy build files to project directory
-          cp -r dist/* ${{ env.PROJECT_PATH }}/
-          cp package*.json ${{ env.PROJECT_PATH }}/
+          cp -r dist/* ${{ env.PROJECT_PATH }}/dist/
+          cp package*.json ${{ env.PROJECT_PATH }}
 
           # Install production dependencies
           cd ${{ env.PROJECT_PATH }}
           npm ci --omit=dev
 
-          cd ${{ env.PROJECT_PATH }}
-
           # Start/Restart PM2 process
-          pm2 reload ${{ github.event.repository.name }} --update-env
+          pm2 reload ${{ github.event.repository.name }} --update-env || pm2 start dist/main.js --name ${{ github.event.repository.name }}
 
       - name: Save PM2 process list
         run: pm2 save
