@@ -1,4 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import 'dotenv/config';
+import 'newrelic';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
