@@ -1,3 +1,6 @@
+require('dotenv').config();
+require('newrelic');
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
