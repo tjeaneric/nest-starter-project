@@ -1,4 +1,4 @@
-name: pm2-deploy
+name: pm2-devops-deploy
 
 on:
   workflow_dispatch:
