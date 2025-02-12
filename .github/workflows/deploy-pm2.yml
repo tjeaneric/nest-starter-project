@@ -9,7 +9,7 @@ on:
         type: string
         default: 'vx.x.x'
       environment:
-        description: 'Environment to deploy to'
+        description: 'Environment to use while deploying'
         required: true
         default: 'ec2_prod_server'
         type: choice
