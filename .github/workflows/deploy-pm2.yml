@@ -65,12 +65,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build application
         run: npm run build
@@ -79,7 +79,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-prod-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-prod-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-prod-
 
@@ -94,7 +94,7 @@ jobs:
 
           # Install production dependencies
           cd ${{ env.PROJECT_PATH }}
-          yarn install --frozen-lockfile
+          yarn install --immutable
 
           # Restart or Reload the app, Check if it's running in fork mode, if yes restart in cluster mode
 
