@@ -42,15 +42,7 @@ jobs:
         with:
           tag_name: ${{ inputs.tag_name }}
           name: Release ${{ inputs.tag_name }}
-          body: |
-            ## Release Notes
-            ${{ inputs.release_notes }}
-
-            ## Deployment Information
-            - Environment: ${{ inputs.environment }}
-            - PM2 Process Name: ${{ github.event.repository.name }}
-          draft: false
-          prerelease: false
+          generate_release_notes: true
 
   build-and-deploy:
     needs: create-release
@@ -108,8 +100,17 @@ jobs:
           cd ${{ env.PROJECT_PATH }}
           npm ci --omit=dev
 
-          # Start/Restart PM2 process
-          pm2 reload ${{ github.event.repository.name }} --update-env || pm2 start dist/main.js --name ${{ github.event.repository.name }}
+          # Restart or Reload the app, Check if it's running in fork mode, if yes restart in cluster mode
 
-      - name: Save PM2 process list
-        run: pm2 save
+          APP_NAME=${{ github.event.repository.name }}
+          INSTANCES=$(pm2 jlist | jq --arg app_name "$APP_NAME" '.[] | select(.name == $app_name) | .pm2_env.instances // 0' | head -n 1)
+
+          if [[ "$INSTANCES" -gt 4 ]]; then
+            echo "PM2 app $APP_NAME is running with $INSTANCES instances."
+            pm2 reload $APP_NAME --update-env
+          else
+            echo "PM2 app $APP_NAME is running less than 4 instances ($INSTANCES)."
+            pm2 delete $APP_NAME || true
+            pm2 start dist/main.js --name $APP_NAME -i max
+            pm2 save
+          fi
