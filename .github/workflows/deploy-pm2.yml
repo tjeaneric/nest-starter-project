@@ -90,8 +90,7 @@ jobs:
 
           # Copy build files to project directory
           cp -r dist/* ${{ env.PROJECT_PATH }}/dist/
-          cp package*.json ${{ env.PROJECT_PATH }}
-          cp yarn.lock ${{ env.PROJECT_PATH }}
+          cp package*.json yarn.lock .yarnrc.yml ${{ env.PROJECT_PATH }}
 
           # Install production dependencies
           cd ${{ env.PROJECT_PATH }}
