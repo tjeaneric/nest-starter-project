@@ -90,7 +90,7 @@ jobs:
 
           # Copy build files to project directory
           cp -r dist/* ${{ env.PROJECT_PATH }}/dist/
-          cp package*.json ${{ env.PROJECT_PATH }}
+          cp package*.json yarn.lock .yarnrc.yml ${{ env.PROJECT_PATH }}
 
           # Install production dependencies
           cd ${{ env.PROJECT_PATH }}
@@ -110,3 +110,5 @@ jobs:
             pm2 start dist/main.js --name $APP_NAME -i max
             pm2 save
           fi
+
+          git reset --hard HEAD
