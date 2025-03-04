@@ -1,3 +1,5 @@
+import './tracer';
+
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
 import 'newrelic';
