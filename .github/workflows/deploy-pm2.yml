@@ -110,5 +110,5 @@ jobs:
             pm2 start dist/main.js --name $APP_NAME -i max
             pm2 save
           fi
-
+          
           git reset --hard HEAD
