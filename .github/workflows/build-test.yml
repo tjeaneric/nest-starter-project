@@ -26,11 +26,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
-      - name: Run lint - Format check
-        run: yarn run lint
-
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Run lint - Format check
+        run: yarn run lint
 
       - name: Build project
         run: yarn run build
