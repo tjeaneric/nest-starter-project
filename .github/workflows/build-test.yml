@@ -16,16 +16,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: enable corepack and set yarn version to latest stable
+        run: |
+          corepack enable
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: yarn install --immutable
+          cache: 'yarn'
 
       - name: Run lint - Format check
         run: yarn run lint
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Build project
         run: yarn run build
