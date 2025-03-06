@@ -32,6 +32,7 @@ jobs:
     runs-on: ${{vars.RUNNERS}}
     permissions:
       contents: write # Needed for creating releases
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Release
         uses: softprops/action-gh-release@v2
