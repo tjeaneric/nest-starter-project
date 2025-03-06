@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "Provisioning ${{ vars.RUNNERS }}"
     outputs:
-      runners: ${{ '[' + join(fromJson(vars.RUNNERS), ',') + ']' }}
+      runners: ${{ format('[{0}]', join(fromJson(vars.RUNNERS), ',')) }}
 
   create-release:
     needs: prereq
