@@ -41,7 +41,10 @@ jobs:
     needs: prereq
     if: inputs.version_to_rollback == '' # Only create release for new deployments
     environment: ${{ github.event.inputs.environment }}
-    runs-on: ${{ needs.prereq.outputs.runners }}
+    runs-on: ${{matrix.runner}}
+    strategy:
+      matrix:
+        runner: ${{ needs.prereq.outputs.runners }}
     permissions:
       contents: write # Needed for creating releases
     steps:
@@ -54,10 +57,11 @@ jobs:
 
   build-and-deploy:
     needs: create-release
-    runs-on: ${{ needs.prereq.outputs.runners }}
+    runs-on: ${{matrix.runner}}
     strategy:
       matrix:
         node-version: [20.x]
+        runner: ${{ needs.prereq.outputs.runners }}
     environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout code
