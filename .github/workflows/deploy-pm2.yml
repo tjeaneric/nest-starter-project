@@ -27,12 +27,26 @@ env:
   PROJECT_PATH: ${{ vars.PROJECT_DIR }}/${{ github.event.repository.name }}
 
 jobs:
+  prereq:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Setup runner names
+        run: |
+          echo "Provisioning ${{ vars.RUNNERS }}"
+    outputs:
+      runners: ${{ format('[{0}]', join(fromJson(vars.RUNNERS), ',')) }}
+
   create-release:
+    needs: prereq
     if: inputs.version_to_rollback == '' # Only create release for new deployments
-    runs-on: ${{vars.RUNNERS}}
+    environment: ${{ github.event.inputs.environment }}
+    runs-on: ${{matrix.runner}}
+    strategy:
+      matrix:
+        runner: ${{ needs.prereq.outputs.runners }}
     permissions:
       contents: write # Needed for creating releases
-    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -43,10 +57,11 @@ jobs:
 
   build-and-deploy:
     needs: create-release
-    runs-on: ${{vars.RUNNERS}}
+    runs-on: ${{matrix.runner}}
     strategy:
       matrix:
         node-version: [20.x]
+        runner: ${{ needs.prereq.outputs.runners }}
     environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout code
