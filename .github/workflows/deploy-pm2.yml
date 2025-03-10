@@ -25,26 +25,16 @@ on:
 
 env:
   PROJECT_PATH: ${{ vars.PROJECT_DIR }}/${{ github.event.repository.name }}
+  ENV_NAME: ${{ github.event.inputs.environment }}
 
 jobs:
-  prereq:
-    runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
-    steps:
-      - name: Setup runner names
-        run: |
-          echo "Provisioning ${{ vars.RUNNERS }}"
-    outputs:
-      runners: ${{ format('[{0}]', join(fromJson(vars.RUNNERS), ',')) }}
-
   create-release:
-    needs: prereq
     if: inputs.version_to_rollback == '' # Only create release for new deployments
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ env.ENV_NAME }}
     runs-on: ${{matrix.runner}}
     strategy:
       matrix:
-        runner: ${{ needs.prereq.outputs.runners }}
+        runner: [DEVOPS-UBU-DEV]
     permissions:
       contents: write # Needed for creating releases
     steps:
@@ -61,8 +51,8 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        runner: ${{ needs.prereq.outputs.runners }}
-    environment: ${{ github.event.inputs.environment }}
+        runner: [DEVOPS-UBU-DEV]
+    environment: ${{ env.ENV_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
