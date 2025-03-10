@@ -25,7 +25,6 @@ on:
 
 env:
   PROJECT_PATH: ${{ vars.PROJECT_DIR }}/${{ github.event.repository.name }}
-  ENV_NAME: ${{ github.event.inputs.environment }}
 
 jobs:
   create-release:
@@ -36,7 +35,7 @@ jobs:
         runner: [DEVOPS-UBU-DEV]
     permissions:
       contents: write # Needed for creating releases
-    environment: ${{ env.ENV_NAME }}
+    environment: ${{ vars.ENV_NAME }}
     steps:
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -52,7 +51,7 @@ jobs:
       matrix:
         node-version: [20.x]
         runner: [DEVOPS-UBU-DEV]
-    environment: ${{ env.ENV_NAME }}
+    environment: ${{ vars.ENV_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
