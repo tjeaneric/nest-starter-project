@@ -30,13 +30,13 @@ env:
 jobs:
   create-release:
     if: inputs.version_to_rollback == '' # Only create release for new deployments
-    environment: ${{ env.ENV_NAME }}
     runs-on: ${{matrix.runner}}
     strategy:
       matrix:
         runner: [DEVOPS-UBU-DEV]
     permissions:
       contents: write # Needed for creating releases
+    environment: ${{ env.ENV_NAME }}
     steps:
       - name: Release
         uses: softprops/action-gh-release@v2
