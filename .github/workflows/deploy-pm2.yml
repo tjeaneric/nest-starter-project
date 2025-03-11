@@ -37,15 +37,10 @@ jobs:
     permissions:
       contents: write # Needed for creating releases
     steps:
-      - name: Display ref name
-        run: |
-          echo "Ref : ${{ github.ref }}"
-          echo "Ref name: ${{ github.ref_name }}"
-          echo "target_commitish: ${{ github.event.inputs.branch }}"
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }} # Dynamically check out the selected branch
+          fetch-depth: 0
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
