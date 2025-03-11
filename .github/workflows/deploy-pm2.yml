@@ -37,6 +37,11 @@ jobs:
     permissions:
       contents: write # Needed for creating releases
     steps:
+      - name: Display ref name
+        run: |
+          echo "Ref : ${{ github.ref }}"
+          echo "Ref name: ${{ github.ref_name }}"
+          echo "target_commitish: ${{ github.event.inputs.branch }}"
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -44,6 +49,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          target_commitish: ${{ github.event.inputs.branch }}
           tag_name: ${{ inputs.tag_name }}
           name: Release ${{ inputs.tag_name }}
           generate_release_notes: true
