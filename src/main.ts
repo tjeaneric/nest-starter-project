@@ -1,7 +1,6 @@
-import './tracer';
-
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
+import './tracer';
 import 'newrelic';
 import { AppModule } from './app.module';
 
