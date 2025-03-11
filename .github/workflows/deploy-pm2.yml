@@ -37,6 +37,10 @@ jobs:
     permissions:
       contents: write # Needed for creating releases
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }} # Dynamically check out the selected branch
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
