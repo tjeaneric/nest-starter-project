@@ -36,7 +36,6 @@ jobs:
       - name: Compute outputs
         id: node-version
         run: |
-          echo "------ ${{ vars.NODE_VERSION }} ------------"
           echo "NODE_VERSION=${{ vars.NODE_VERSION }}" >> $GITHUB_OUTPUT
 
   create-release:
@@ -50,10 +49,6 @@ jobs:
     permissions:
       contents: write # Needed for creating releases
     steps:
-      - env:
-          NODE_VERSION: ${{ needs.pre-jobs-compute.outputs.NODE_VERSION }}
-        run: echo "Node version is $NODE_VERSION"
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -75,6 +70,10 @@ jobs:
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
+      - env:
+          NODE_VERSION: ${{ needs.pre-jobs-compute.outputs.NODE_VERSION }}
+        run: echo "Node version is $NODE_VERSION"
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
