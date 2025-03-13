@@ -70,7 +70,7 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     steps:
       - env:
-          NODE_VERSION: ${{ needs.create-release.outputs.NODE_VERSION }}
+          NODE_VERSION: ${{ fromJson(needs.create-release.outputs.NODE_VERSION )}}
         run: echo "Node version is $NODE_VERSION"
 
       - name: Checkout code
