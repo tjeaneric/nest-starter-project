@@ -117,6 +117,12 @@ jobs:
           else
             echo "PM2 app $APP_NAME is running less than 4 instances ($INSTANCES)."
             pm2 delete $APP_NAME || true
-            pm2 start dist/main.js --name $APP_NAME -i max
+            if [ -d "dist/src" ]; then
+              # src folder exists in dist, use the original path
+              pm2 start dist/src/main.js --name $APP_NAME -i max
+            else
+              # No src folder, use the alternative path
+              pm2 start dist/main.js --name $APP_NAME -i max
+            fi
             pm2 save
           fi
