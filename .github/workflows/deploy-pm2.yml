@@ -48,7 +48,7 @@ jobs:
       contents: write # Needed for creating releases
     steps:
       - name: print-node-version
-        run: echo "Node version is ${{ matrix.node-version }}"
+        run: echo "Node version is ${{ needs.compute.outputs.NODE_VERSION }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
