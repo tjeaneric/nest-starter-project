@@ -28,7 +28,7 @@ env:
 
 jobs:
   pre-jobs-compute:
-    runs-on: ubuntu-latest
+    runs-on: [DEVOPS-UBU-DEV]
     outputs:
       NODE_VERSION: ${{ env.NODE_VERSION }}
     steps:
