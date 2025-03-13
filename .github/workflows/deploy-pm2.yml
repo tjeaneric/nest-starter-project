@@ -39,7 +39,6 @@ jobs:
           echo "NODE_VERSION=${{ vars.NODE_VERSION }}" >> $GITHUB_OUTPUT
 
   create-release:
-    needs: pre-jobs-compute
     if: inputs.version_to_rollback == '' # Only create release for new deployments
     environment: ${{ github.event.inputs.environment }}
     runs-on: ${{matrix.runner}}
@@ -48,8 +47,6 @@ jobs:
         runner: [DEVOPS-UBU-DEV]
     permissions:
       contents: write # Needed for creating releases
-    outputs:
-      NODE_VERSION: ${{ needs.pre-jobs-compute.outputs.NODE_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -64,11 +61,11 @@ jobs:
           generate_release_notes: true
 
   build-and-deploy:
-    needs: create-release
+    needs: [create-release, pre-jobs-compute]
     runs-on: ${{matrix.runner}}
     strategy:
       matrix:
-        node-version: ${{ needs.create-release.outputs.NODE_VERSION }}
+        node-version: ${{ needs.pre-jobs-compute.outputs.NODE_VERSION }}
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
