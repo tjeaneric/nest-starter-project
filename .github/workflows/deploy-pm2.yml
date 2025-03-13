@@ -69,9 +69,8 @@ jobs:
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
-      - env:
-          NODE_VERSION: ${{ fromJson(needs.pre-jobs-compute.outputs.NODE_VERSION)}}
-        run: echo "Node version is $NODE_VERSION"
+      - name: Print NODE_VERSION
+        run: echo "Node version is ${{ fromJson(needs.pre-jobs-compute.outputs.NODE_VERSION)}}"
 
       - name: Checkout code
         uses: actions/checkout@v4
