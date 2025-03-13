@@ -65,12 +65,12 @@ jobs:
     runs-on: ${{matrix.runner}}
     strategy:
       matrix:
-        node-version: ${{ needs.pre-jobs-compute.outputs.NODE_VERSION }}
+        node-version: ${{ fromJson(needs.pre-jobs-compute.outputs.NODE_VERSION) }}
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
       - env:
-          NODE_VERSION: ${{ fromJson(needs.create-release.outputs.NODE_VERSION )}}
+          NODE_VERSION: ${{ fromJson(needs.pre-jobs-compute.outputs.NODE_VERSION)}}
         run: echo "Node version is $NODE_VERSION"
 
       - name: Checkout code
