@@ -47,6 +47,9 @@ jobs:
     permissions:
       contents: write # Needed for creating releases
     steps:
+      - name: print-node-version
+        run: echo "Node version is ${{ matrix.node-version }}"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -68,8 +71,6 @@ jobs:
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
-      - name: print-node-version
-        run: echo "Node version is ${{ matrix.node-version }}"
       - name: Checkout code
         uses: actions/checkout@v4
         with:
