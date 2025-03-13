@@ -68,7 +68,7 @@ jobs:
     runs-on: ${{matrix.runner}}
     strategy:
       matrix:
-        node-version: ['${{ needs.compute.outputs.NODE_VERSION }}']
+        node-version: ['${{ needs.create-release.outputs.NODE_VERSION }}']
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
