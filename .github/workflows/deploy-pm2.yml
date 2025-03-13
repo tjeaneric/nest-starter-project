@@ -30,9 +30,10 @@ jobs:
   pre-jobs-compute:
     runs-on: [DEVOPS-UBU-DEV]
     outputs:
-      NODE_VERSION: ${{ env.NODE_VERSION }}
+      NODE_VERSION: ${{ steps.node-version.outputs.NODE_VERSION }}
     steps:
       - name: Compute outputs
+        id: node-version
         run: |
           echo "NODE_VERSION=${{ vars.NODE_VERSION }}" >> $GITHUB_OUTPUT
 
