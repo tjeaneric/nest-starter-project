@@ -27,7 +27,17 @@ env:
   PROJECT_PATH: ${{ vars.PROJECT_DIR }}/${{ github.event.repository.name }}
 
 jobs:
+  pre-jobs-compute:
+    runs-on: ubuntu-latest
+    outputs:
+      NODE_VERSION: ${{ env.NODE_VERSION }}
+    steps:
+      - name: Compute outputs
+        run: |
+          echo "NODE_VERSION=${{ vars.NODE_VERSION }}" >> $GITHUB_OUTPUT
+
   create-release:
+    needs: pre-jobs-compute
     if: inputs.version_to_rollback == '' # Only create release for new deployments
     environment: ${{ github.event.inputs.environment }}
     runs-on: ${{matrix.runner}}
@@ -54,7 +64,7 @@ jobs:
     runs-on: ${{matrix.runner}}
     strategy:
       matrix:
-        node-version: ${{ vars.NODE_VERSION }}
+        node-version: ['${{ needs.compute.outputs.NODE_VERSION }}']
         runner: [DEVOPS-UBU-DEV]
     environment: ${{ github.event.inputs.environment }}
     steps:
