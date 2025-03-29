@@ -140,6 +140,3 @@ jobs:
             fi
             pm2 save
           fi
-
-          # Clean up working directory
-          git reset --hard HEAD
