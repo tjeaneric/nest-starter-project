@@ -142,6 +142,7 @@ jobs:
           fi
 
   newrelic:
+    needs: [build-and-deploy]
     runs-on: ubuntu-latest
     name: New Relic
     steps:
